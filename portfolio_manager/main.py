@@ -46,21 +46,21 @@ def main():
                 # Create a temporary Holding object and pass it to your portfolio
                 new_holding = Holding(ticker, shares, price)
                 my_portfolio.add_holding(new_holding)
-                print(f"✅ Successfully added {shares} shares of {ticker.upper()}!")
+                print(f"Successfully added {shares} shares of {ticker.upper()}!")
                 
             except (ValueError, InvalidHoldingError, DuplicateHoldingError) as error_msg:
-                print(f"❌ Input Error: {error_msg}")
+                print(f"Input Error: {error_msg}")
                 
         elif choice == "2":
             try:
                 ticker_to_remove = input("Enter the stock ticker you want to remove: ").strip()
                 # Run the backend lookup and removal logic you coded in portfolio.py
                 my_portfolio.remove_holding(ticker_to_remove)
-                print(f"✅ Successfully removed {ticker_to_remove.upper()} from your portfolio.")
+                print(f"Successfully removed {ticker_to_remove.upper()} from your portfolio.")
                 
             except HoldingNotFoundError as error_msg:
                 # Captures cases where the stock doesn't exist without crashing the menu
-                print(f"❌ Removal Error: {error_msg}")
+                print(f"Removal Error: {error_msg}")
 
             
         elif choice == "3":
@@ -98,30 +98,30 @@ def main():
                 if calc_choice == "A":
                     rate = float(input("Enter the discount rate (e.g., 0.10 for 10%): "))
                     npv_res = calculate_npv(initial_inv, cash_flows, rate)
-                    print(f"📊 Calculated NPV: ${npv_res:.2f}")
+                    print(f"Calculated NPV: ${npv_res:.2f}")
                     
                 elif calc_choice == "B":
                     initial_inv = float(input("Enter initial investment amount: "))
                     final_val = float(input("Enter expected final portfolio value: "))
                     roi_res = calculate_roi(initial_inv, final_val)
-                    print(f"📊 Calculated ROI: {roi_res}%")
+                    print(f"Calculated ROI: {roi_res}%")
                     
                 elif calc_choice == "C":
                     payback_res = calculate_payback_period(initial_inv, cash_flows)
                     if payback_res is not None:
-                        print(f"📊 Calculated Payback Period: {payback_res} years")
+                        print(f"Calculated Payback Period: {payback_res} years")
                     else:
-                        print("⚠️ This project never recovers its initial investment.")
+                        print("This project never recovers its initial investment.")
                         
                 elif calc_choice == "D":
                     irr_res = calculate_irr(initial_inv, cash_flows)
-                    print(f"📊 Calculated IRR: {irr_res * 100:.1f}% ({irr_res})")
+                    print(f"Calculated IRR: {irr_res * 100:.1f}% ({irr_res})")
                     
                 else:
-                    print("❌ Invalid calculation type selected.")
+                    print("Invalid calculation type selected.")
                     
             except (ValueError, InvalidFinanceInputError) as error_msg:
-                print(f"❌ Calculation Error: {error_msg}")
+                print(f"Calculation Error: {error_msg}")
 
             
         elif choice == "5":
@@ -129,9 +129,9 @@ def main():
             try:
                 with open(db_filename, "w") as file:
                     json.dump(my_portfolio.to_dict(), file, indent=4)
-                print("💾 Application data backed up cleanly to data.json.")
+                print("Application data backed up cleanly to data.json.")
             except Exception as e:
-                print(f"⚠️ Error saving application backup state: {e}")
+                print(f"Error saving application backup state: {e}")
                 
             print("Exiting program. Thank you for using the Portfolio Engine!")
             break
