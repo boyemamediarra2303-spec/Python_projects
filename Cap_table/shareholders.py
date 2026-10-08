@@ -30,6 +30,13 @@ class Shareholder:
         if isinstance(other, Shareholder):
             return self.shares < other.shares 
         return NotImplemented
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "shares": self.shares,
+            "investor_id": self.investor_id,
+            "share_class": self.share_class.to_dict()  # Nested conversion!
+        }
 #Test cases:
 if __name__ == "__main__":
     common = CommonShare("Common")

@@ -1,3 +1,4 @@
+import json
 from shareholders import Shareholder
 from shares import CommonShare, PreferredShare
 
@@ -56,6 +57,90 @@ class CapTable:
     def describe_all(self):
         """Returns a list of descriptions from all share classes polymorphically."""
         return [sh.share_class.describe() for sh in self.shareholders.values()]
+
+    def exit_waterfall(self, exit_value):
+    
+        #Distributes acquisition value across shareholders respecting preferred constraints polymorphically, then distributing the remainder pro-rata.
+        payouts = {sh.name: 0.0 for sh in self.shareholders.values()}
+        remaining_cash = float(exit_value)
+    
+        # Collect all preferred claims polymorphically. 
+        # Common shares naturally return 0, filtering themselves out without isinstance!
+        preferred_claims = {}
+        total_preferred_claims = 0.0
+        
+        for sh in self.shareholders.values():
+            multiple = sh.share_class.liquidation_multiple()
+            if multiple > 0:
+                # Payout ceiling formula based on share volume preference bounds
+                claim = sh.shares * multiple
+                preferred_claims[sh.name] = claim
+                total_preferred_claims += claim
+
+        if total_preferred_claims > 0:
+            if remaining_cash <= total_preferred_claims:
+                # Scenario A: Crunch time. Cash cannot cover preferred baseline entirely.
+                for name, claim in preferred_claims.items():
+                    payouts[name] = round((claim / total_preferred_claims) * remaining_cash, 2)
+                return payouts  # Game over, all cash completely exhausted
+            else:
+                # Scenario B: Satisfy preferred holders completely and move to remainder pool
+                for name, claim in preferred_claims.items():
+                    payouts[name] = round(claim, 2)
+                    remaining_cash -= claim
+
+        # Determine the total common share pool baseline remaining
+        common_shareholders = [sh for sh in self.shareholders.values() if sh.share_class.liquidation_multiple() == 0]
+        total_common_shares = sum(sh.shares for sh in common_shareholders)
+
+        if total_common_shares > 0 and remaining_cash > 0:
+            for sh in common_shareholders:
+                pro_rata_share = (sh.shares / total_common_shares) * remaining_cash
+                payouts[sh.name] = round(pro_rata_share, 2)
+
+        return payouts
+
+
+    def save_to_json(self, filename="data.json"):
+        #Converts all data into standard dictionaries and writes to a file.
+        serialized_data = {
+            "company_name": self.company_name,
+            "shareholders": [sh.to_dict() for sh in self.shareholders.values()]
+        }
+        with open(filename, "w") as file:
+            json.dump(serialized_data, file, indent=4)
+        print(f"Cap table data safely written to {filename}")
+
+    def load_from_json(self, filename="data.json"):
+        #Reads a file and reconstructs complex Python objects dynamically.
+        try:
+            with open(filename, "r") as file:
+                data = json.load(file)
+                
+            self.company_name = data["company_name"]
+            self.shareholders = {}  # Reset current tracking workspace
+            
+            for sh_data in data["shareholders"]:
+                # 1. Rebuild the polymorphic share class round-trip
+                sc_data = sh_data["share_class"]
+                if sc_data["type"] == "Preferred":
+                    share_class = PreferredShare(sc_data["name"], sc_data["liquidation_multiple"])
+                else:
+                    share_class = CommonShare(sc_data["name"])
+                    
+                # 2. Rebuild the Shareholder object
+                shareholder = Shareholder(
+                    name=sh_data["name"],
+                    shares=sh_data["shares"],
+                    share_class=share_class,
+                    investor_id=sh_data["investor_id"]
+                )
+                
+                # 3. Re-index into the engine's active dictionary storage
+                self.add_shareholder(shareholder)
+            print(f" Cap table successfully restored from {filename}")
+        except FileNotFoundError:
+            print(f" No existing data file found at {filename}. Starting fresh.")
 
 if __name__ == "__main__":
     #testing the script

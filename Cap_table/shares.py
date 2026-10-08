@@ -19,7 +19,8 @@ class CommonShare(Share):
         return 0
     def describe(self):
         return f"{self.name} common share, no liquidation preference"
-
+    def to_dict(self):
+        return {"type": "Common", "name": self.name}
 class PreferredShare(Share):
     def __init__(self,name, liquidation_multiple=1.0):
         super().__init__(name)
@@ -30,7 +31,12 @@ class PreferredShare(Share):
         return self._liquidation_multiple
     def describe(self):
         return f"{self.name} preferred share: {self._liquidation_multiple} Liquidation preference"
-
+    def to_dict(self):
+        return {
+            "type": "Preferred", 
+            "name": self.name, 
+            "liquidation_multiple": self._liquidation_multiple
+        }
 
 #test cases:
 if __name__ == "__main__":
