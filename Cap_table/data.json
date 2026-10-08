@@ -1,1 +1,52 @@
-{}
+{
+    "company_name": "ACM corp",
+    "shareholders": [
+        {
+            "name": "Diarra",
+            "shares": 15000,
+            "investor_id": null,
+            "share_class": {
+                "type": "Common",
+                "name": "Common"
+            }
+        },
+        {
+            "name": "Maty",
+            "shares": 15000,
+            "investor_id": null,
+            "share_class": {
+                "type": "Common",
+                "name": "Common"
+            }
+        },
+        {
+            "name": "Ahma",
+            "shares": 3000,
+            "investor_id": null,
+            "share_class": {
+                "type": "Preferred",
+                "name": "Ahma Preferred",
+                "liquidation_multiple": 2.0
+            }
+        },
+        {
+            "name": "Katrina",
+            "shares": 4500,
+            "investor_id": null,
+            "share_class": {
+                "type": "Preferred",
+                "name": "Katrina Preferred",
+                "liquidation_multiple": 1.5
+            }
+        },
+        {
+            "name": "Fatou",
+            "shares": 7000,
+            "investor_id": null,
+            "share_class": {
+                "type": "Common",
+                "name": "Common"
+            }
+        }
+    ]
+}
