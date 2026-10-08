@@ -6,7 +6,6 @@ from captables import CapTable, DuplicateShareholderError, ShareholderNotFoundEr
 def main():
     company_name= input('Enter company name to start: ')
     ct = CapTable(company_name)
-    ct.load_from_json()
     last_report= None
 
     while True:
